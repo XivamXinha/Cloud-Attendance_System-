@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student Signup - cloud EM</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
+      background: linear-gradient(135deg, #d4f1f4 0%, #b8e6f0 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      padding: 20px 30px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-circle {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #00bcd4 0%, #0097a7 100%);
+      border-radius: 50%;
+    }
+
+    .logo-text {
+      font-size: 20px;
+      font-weight: 300;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%);
+      color: #fff;
+      padding: 10px 30px;
+      border-radius: 25px;
+      margin-bottom: 20px;
+      display: inline-block;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+      text-align: left;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #00bcd4;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%);
+      border: none;
+      color: #fff;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    /* Already Registered Button */
+    .login-link {
+      display: inline-block;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #00acc1;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .login-link:hover {
+      text-decoration: underline;
+    }
+
+    .footer {
+      padding: 20px;
+      text-align: center;
+    }
+
+    .back {
+      text-decoration: none;
+      color: #00acc1;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <div class="logo">
+      <div class="logo-circle"></div>
+      <span class="logo-text">cloud EM</span>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="card">
+
+      <h2>Attendance Management System</h2>
+      <div class="badge">Student Signup</div>
+
+      <form id="signupForm">
+
+        <div class="form-group">
+          <input id="name" type="text" placeholder="Name" />
+        </div>
+
+        <div class="form-group">
+          <input id="roll" type="text" placeholder="Roll Number" />
+        </div>
+
+        <div class="form-group">
+          <input id="contact" type="tel" placeholder="Contact Number" />
+        </div>
+
+        <div class="form-group">
+          <select id="branch">
+            <option value="">Select Branch</option>
+            <option value="B.Tech Computer Science">B.Tech (Computer Science)</option>
+            <option value="B.Tech Electrical Engineering">B.Tech (Electrical Engineering)</option>
+            <option value="B.Tech Gaming Design">B.Tech (Gaming Design)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <input id="email" type="email" placeholder="Email" />
+        </div>
+
+        <div class="form-group">
+          <input id="password" type="password" placeholder="Password" />
+        </div>
+
+        <button class="btn" type="submit">Signup</button>
+      </form>
+
+      <!-- Already Registered Login Link -->
+      <a class="login-link" href="studentlogin.html">Already Registered? Login Here</a>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a class="back" href="welcome.html">← Back</a>
+  </div>
+
+  <script>
+    document.getElementById("signupForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const roll = document.getElementById("roll").value;
+      const contact = document.getElementById("contact").value;
+      const branch = document.getElementById("branch").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      if (!name || !roll || !contact || !branch || !email || !password) {
+        alert("Please fill all fields");
+        return;
+      }
+      
+      const res = await fetch("http://localhost:5000/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          role: "student",
+          roll,
+          contact,
+          branch
+        })
+      });
+
+      const data = await res.json();
+      alert(data.message);
+
+      if (res.ok) {
+        window.location.href = "verifystudent.html";
+      }
+    });
+  </script>
+
+</body>
+</html>

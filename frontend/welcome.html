@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome - cloud EM</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #d4f1f4 0%, #c8e9f0 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 60px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    header {
+      margin-bottom: 40px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%);
+      border: 4px solid #00bcd4;
+      box-shadow: 0 4px 12px rgba(0, 188, 212, 0.3);
+    }
+
+    .logo-text {
+      font-size: 28px;
+      font-weight: 300;
+      color: #000;
+    }
+
+    .cloud-text {
+      font-weight: 400;
+    }
+
+    .welcome-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .welcome-heading {
+      font-size: 48px;
+      font-weight: 300;
+      color: #1a1a1a;
+      margin-bottom: 10px;
+    }
+
+    .system-name {
+      font-size: 48px;
+      font-weight: 300;
+      color: #1a1a1a;
+      margin-bottom: 60px;
+    }
+
+    .role-buttons {
+      display: flex;
+      gap: 30px;
+      margin-bottom: 25px;
+    }
+
+    .role-btn {
+      background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%);
+      color: white;
+      padding: 16px 56px;
+      font-size: 20px;
+      font-weight: 500;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(0, 188, 212, 0.4);
+      transition: all 0.3s ease;
+      min-width: 160px;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .role-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(0, 188, 212, 0.5);
+      background: linear-gradient(135deg, #00acc1 0%, #0097a7 100%);
+    }
+
+    .role-instruction {
+      font-size: 16px;
+      color: #333;
+    }
+
+    .back-btn {
+      position: absolute;
+      bottom: 40px;
+      right: 60px;
+      background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%);
+      color: white;
+      padding: 14px 42px;
+      font-size: 18px;
+      font-weight: 500;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(0, 188, 212, 0.4);
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .back-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(0, 188, 212, 0.5);
+      background: linear-gradient(135deg, #00acc1 0%, #0097a7 100%);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .welcome-heading,
+      .system-name {
+        font-size: 36px;
+      }
+
+      .role-buttons {
+        flex-direction: column;
+      }
+
+      .back-btn {
+        right: 30px;
+        bottom: 30px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .welcome-heading,
+      .system-name {
+        font-size: 28px;
+      }
+
+      .back-btn {
+        position: relative;
+        margin-top: 40px;
+        right: auto;
+        bottom: auto;
+        align-self: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <div class="logo-icon"></div>
+        <span class="logo-text"><span class="cloud-text">cloud</span> EM</span>
+      </div>
+    </header>
+
+    <main class="welcome-content">
+      <h1 class="welcome-heading">Welcome To</h1>
+      <h2 class="system-name">Attendance Management System</h2>
+
+      <div class="role-buttons">
+        <a href="student.html" class="role-btn">Student</a>
+        <a href="teacher.html" class="role-btn">Teacher</a>
+
+      </div>
+
+      <p class="role-instruction">Choose according to your role</p>
+    </main>
+
+    <a href="event.html" class="back-btn">Back</a>
+  </div>
+</body>
+</html>

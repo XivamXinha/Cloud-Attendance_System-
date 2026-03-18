@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Verify OTP - cloud EM</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
+      background: linear-gradient(135deg, #d4f1f4 0%, #b8e6f0 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      padding: 20px 30px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-circle {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #00bcd4 0%, #0097a7 100%);
+      border-radius: 50%;
+    }
+
+    .logo-text {
+      font-size: 20px;
+      font-weight: 300;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%);
+      color: #fff;
+      padding: 10px 30px;
+      border-radius: 25px;
+      margin-bottom: 20px;
+      display: inline-block;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+      text-align: left;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #00bcd4;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #00bcd4 0%, #00acc1 100%);
+      border: none;
+      color: #fff;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    .footer {
+      padding: 20px;
+      text-align: center;
+    }
+
+    .back {
+      text-decoration: none;
+      color: #00acc1;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <div class="logo">
+      <div class="logo-circle"></div>
+      <span class="logo-text">cloud EM</span>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="card">
+
+      <h2>Verify OTP</h2>
+      <div class="badge">OTP Verification</div>
+
+      <form id="verifyForm">
+
+        <div class="form-group">
+          <input id="email" type="email" placeholder="Email" />
+        </div>
+
+        <div class="form-group">
+          <input id="otp" type="text" placeholder="OTP" />
+        </div>
+
+        <button class="btn" type="button" onclick="verify()">Verify</button>
+      </form>
+
+    </div>
+  </div>
+
+  <div class="footer">
+    <a class="back" href="teacherlogin.html">← Back to Login</a>
+  </div>
+
+  <script>
+    async function verify() {
+      const email = document.getElementById("email").value;
+      const otp = document.getElementById("otp").value;
+
+      if (!email || !otp) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      //const res = await fetch("http://localhost:5000/api/auth/verify", {
+      const res = await fetch("http://localhost:5000/api/auth/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert("OTP Verified Successfully!");
+        window.location = "teacherlogin.html";
+      } else {
+        alert(data.message || "Failed to verify OTP.");
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teacher Dashboard</title>
+
+  <!-- PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f4f6f8;
+      display: flex;
+    }
+
+    .dashboard-container {
+      display: flex;
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      width: 240px;
+      background: #1f2d3d;
+      color: white;
+      padding: 25px 20px;
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: bold;
+      margin-bottom: 35px;
+    }
+
+    .role {
+      font-size: 14px;
+      opacity: 0.85;
+    }
+
+    /* ===== MAIN ===== */
+    .main-content {
+      flex: 1;
+      padding: 35px;
+      overflow-y: auto;
+    }
+
+    h2 { margin-bottom: 20px; }
+
+    .action-bar {
+      margin-bottom: 25px;
+    }
+
+    button {
+      padding: 10px 18px;
+      margin: 6px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button:hover { background: #2980b9; }
+
+    .danger { background: #e67e22; }
+    .danger:hover { background: #d35400; }
+
+    .delete {
+      background: #e74c3c;
+    }
+    .delete:hover {
+      background: #c0392b;
+    }
+
+    .logout {
+      background: #7f8c8d;
+    }
+    .logout:hover {
+      background: #636e72;
+    }
+
+    /* ===== CARDS ===== */
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 14px;
+      box-shadow: 0 10px 22px rgba(0,0,0,0.08);
+      margin-bottom: 25px;
+      display: none;
+    }
+
+    .code {
+      font-size: 30px;
+      font-weight: bold;
+      color: #27ae60;
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    /* ===== STUDENT LIST ===== */
+    ul {
+      list-style: none;
+      margin-top: 10px;
+    }
+
+    li {
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+
+    /* ===== PANEL ===== */
+    .panel-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 22px;
+    }
+
+    .session-card {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 10px 22px rgba(0,0,0,0.08);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    th {
+      background: #2c3e50;
+      color: white;
+      padding: 6px;
+    }
+
+    td {
+      padding: 6px;
+      border: 1px solid #ddd;
+      vertical-align: top;
+    }
+
+    .present { color: green; font-weight: bold; }
+    .absent { color: red; font-weight: bold; }
+
+    .pdf-btn {
+      margin-top: 10px;
+      background: #2ecc71;
+    }
+    .pdf-btn:hover { background: #27ae60; }
+  </style>
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="logo">cloud EM</div>
+    <div id="role" class="role"></div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <h2 id="welcome"></h2>
+
+    <!-- ACTION BAR -->
+    <div class="action-bar">
+      <button onclick="toggleStudentList()">Student List</button>
+      <button onclick="startAttendance()">Take Attendance</button>
+      <button class="danger" onclick="loadAttendancePanel()">Attendance Panel</button>
+      <button class="logout" onclick="logout()">Logout</button>
+    </div>
+
+    <!-- STUDENT LIST -->
+    <div id="studentBox" class="card">
+      <h3>Student List</h3>
+      <ul id="students"></ul>
+    </div>
+
+    <!-- ATTENDANCE BOX -->
+    <div id="attendanceBox" class="card">
+      <h3>Attendance Code</h3>
+      <div id="attendanceCode" class="code"></div>
+      <button class="danger" onclick="completeAttendance()">Complete Attendance</button>
+    </div>
+
+    <!-- ATTENDANCE PANEL -->
+    <div id="attendancePanel" class="card">
+      <h3>Attendance Sessions</h3>
+      <div id="panelGrid" class="panel-grid"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const { jsPDF } = window.jspdf;
+  const token = localStorage.getItem("token");
+  const payload = JSON.parse(atob(token.split(".")[1]));
+
+  document.getElementById("welcome").innerText =
+    `Hi ${payload.name}, Welcome To Dashboard`;
+  document.getElementById("role").innerText =
+    `Role: ${payload.role}`;
+
+  let currentSessionId = null;
+
+  /* ===== STUDENT LIST ===== */
+  async function toggleStudentList() {
+    const box = document.getElementById("studentBox");
+    box.style.display = box.style.display === "block" ? "none" : "block";
+
+    if (box.style.display === "block") {
+      const res = await fetch("http://localhost:5000/api/auth/students", {
+        headers: { Authorization: "Bearer " + token }
+      });
+      const data = await res.json();
+
+      document.getElementById("students").innerHTML =
+        data.map(s => `<li>${s.name} (${s.email})</li>`).join("");
+    }
+  }
+
+  /* ===== TAKE ATTENDANCE ===== */
+  async function startAttendance() {
+    const res = await fetch("http://localhost:5000/api/attendance/start", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ teacherId: payload.id })
+    });
+
+    const data = await res.json();
+    currentSessionId = data._id;
+
+    document.getElementById("attendanceBox").style.display = "block";
+    document.getElementById("attendanceCode").innerText = data.code;
+  }
+
+  /* ===== COMPLETE ===== */
+  async function completeAttendance() {
+    await fetch("http://localhost:5000/api/attendance/close", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId: currentSessionId })
+    });
+
+    alert("Attendance Completed");
+    currentSessionId = null;
+    document.getElementById("attendanceBox").style.display = "none";
+  }
+
+  /* ===== PANEL ===== */
+  async function loadAttendancePanel() {
+    const panel = document.getElementById("attendancePanel");
+    const grid = document.getElementById("panelGrid");
+
+    panel.style.display = "block";
+    grid.innerHTML = "Loading...";
+
+    const res = await fetch(
+      `http://localhost:5000/api/attendance/teacher/sessions/${payload.id}`,
+      { headers: { Authorization: "Bearer " + token } }
+    );
+
+    const sessions = await res.json();
+    grid.innerHTML = "";
+
+    if (!sessions.length) {
+      grid.innerHTML = "<p>No attendance sessions found.</p>";
+      return;
+    }
+
+    sessions.forEach(s => {
+      grid.innerHTML += `
+        <div class="session-card">
+          <h4>${new Date(s.date).toLocaleString()}</h4>
+          <p><b>Teacher:</b> ${s.teacherId?.name || "N/A"}</p>
+          <p><b>Total Students:</b> ${s.totalStudents}</p>
+
+          <table>
+            <tr>
+              <th>Present</th>
+              <th>Absent</th>
+            </tr>
+            <tr>
+              <td class="present">${(s.presentStudents||[]).map(x => x.name).join("<br>")}</td>
+              <td class="absent">${(s.absentStudents||[]).map(x => x.name).join("<br>")}</td>
+            </tr>
+          </table>
+
+          <button class="pdf-btn" onclick='downloadPDF(${JSON.stringify(s)})'>
+            Download PDF
+          </button>
+
+          <button class="delete" onclick="deleteSession('${s._id}')">
+            Delete Attendance
+          </button>
+        </div>
+      `;
+    });
+  }
+
+  /* ===== DELETE SESSION ===== */
+  async function deleteSession(sessionId) {
+    const ok = confirm("Delete this attendance?\nThis will update all students.");
+    if (!ok) return;
+
+    const res = await fetch(
+      `http://localhost:5000/api/attendance/teacher/session/${sessionId}`,
+      {
+        method: "DELETE",
+        headers: { Authorization: "Bearer " + token }
+      }
+    );
+
+    const data = await res.json();
+    alert(data.message);
+    loadAttendancePanel();
+  }
+
+  /* ===== PDF ===== */
+  function downloadPDF(s) {
+    const doc = new jsPDF();
+    let y = 20;
+
+    doc.text("Attendance Report", 14, y); y += 8;
+    doc.text(`Date: ${new Date(s.date).toLocaleString()}`, 14, y); y += 6;
+    doc.text(`Teacher: ${s.teacherId?.name || "N/A"}`, 14, y); y += 8;
+
+    doc.text("Present Students:", 14, y); y += 6;
+    s.presentStudents.forEach(st => {
+      doc.text(`- ${st.name}`, 18, y);
+      y += 5;
+    });
+
+    y += 6;
+    doc.text("Absent Students:", 14, y); y += 6;
+    s.absentStudents.forEach(st => {
+      doc.text(`- ${st.name}`, 18, y);
+      y += 5;
+    });
+
+    doc.save("attendance_report.pdf");
+  }
+
+  function logout() {
+    localStorage.removeItem("token");
+    location.href = "welcome.html";
+  }
+</script>
+
+</body>
+</html>

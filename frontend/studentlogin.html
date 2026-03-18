@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Login - Attendance Management System</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #d4f1f4 0%, #a8e6e3 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1400px;
+      min-height: 100vh;
+      padding: 30px;
+      position: relative;
+    }
+
+    /* Logo */
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 60px;
+    }
+
+    .logo-icon {
+      width: 35px;
+      height: 35px;
+      background: #00bcd4;
+      border-radius: 50%;
+      border: 3px solid #00bcd4;
+    }
+
+    .logo-text {
+      font-size: 24px;
+      color: #333;
+    }
+
+    /* Content */
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .main-heading {
+      font-size: 48px;
+      font-weight: 400;
+      color: #333;
+      margin-bottom: 40px;
+    }
+
+    .sub-heading {
+      font-size: 36px;
+      font-weight: 400;
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    .role-badge {
+      background: #00bcd4;
+      color: white;
+      padding: 20px 80px;
+      border-radius: 50px;
+      font-size: 42px;
+      margin-bottom: 50px;
+      box-shadow: 0 4px 12px rgba(0, 188, 212, 0.3);
+    }
+
+    /* Form */
+    .login-form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      position: relative;
+    }
+
+    .input-field {
+      width: 100%;
+      max-width: 550px;
+      padding: 18px 20px;
+      font-size: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      outline: none;
+    }
+
+    .input-field:focus {
+      border-color: #00bcd4;
+    }
+
+    .submit-btn {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #00bcd4;
+      color: white;
+      border: none;
+      padding: 18px 50px;
+      font-size: 22px;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 188, 212, 0.3);
+    }
+
+    .submit-btn:hover {
+      background: #00a5bb;
+    }
+
+    /* Not Registered Signup */
+    .signup-section {
+      margin-top: 20px;
+    }
+
+    .signup-link {
+      background: #00bcd4;
+      color: white;
+      padding: 12px 40px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-size: 20px;
+      font-weight: 500;
+      transition: all 0.3s;
+      box-shadow: 0 4px 12px rgba(0, 188, 212, 0.3);
+    }
+
+    .signup-link:hover {
+      background: #00a5bb;
+    }
+
+    /* Footer */
+    .footer {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+    }
+
+    .back-btn {
+      background: #00bcd4;
+      color: white;
+      padding: 12px 35px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-size: 20px;
+    }
+
+    .back-btn:hover {
+      background: #00a5bb;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .submit-btn {
+        position: static;
+        transform: none;
+        width: 100%;
+        margin-top: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="logo">
+      <div class="logo-icon"></div>
+      <span class="logo-text">cloud EM</span>
+    </div>
+
+    <div class="content">
+      <h1 class="main-heading">Attendance Management System</h1>
+      <h2 class="sub-heading">Login You As</h2>
+
+      <div class="role-badge">Student</div>
+
+      <!-- Login Form -->
+      <form id="loginForm" class="login-form">
+        <input 
+          type="email" 
+          id="email" 
+          placeholder="Email" 
+          required
+          class="input-field" 
+        />
+        <input 
+          type="password" 
+          id="password" 
+          placeholder="Password" 
+          required
+          class="input-field" 
+        />
+        <button type="button" class="submit-btn" onclick="login()">Login</button>
+      </form>
+
+      <!-- Not Registered Signup Link -->
+      <div class="signup-section">
+        <span>Not Registered? </span>
+        <a href="student.html" class="signup-link">Signup</a>
+      </div>
+      
+      <!-- Footer Section -->
+      <div class="footer">
+        <a href="welcome.html" class="back-btn">Back</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email,
+          password: password
+        })
+      });
+
+      const data = await res.json();
+      
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        window.location = "studentdashboard.html";
+      } else {
+        alert("Login failed! Please check your credentials.");
+      }
+    }
+  </script>
+</body>
+</html>

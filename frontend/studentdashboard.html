@@ -82,7 +82,7 @@ document.getElementById("role").innerText=`Role: ${payload.role}`;
 const giveBtn=document.getElementById("giveAttendanceBtn");
 
 async function checkAttendanceLive(){
- const res=await fetch("http://localhost:5000/api/attendance/active");
+ const res=await fetch("https://cloud-attendance-system-xyob.onrender.com/api/attendance/active");
  const data=await res.json();
  data.isActive?(giveBtn.style.display="inline-block",giveBtn.classList.add("live")):(giveBtn.style.display="none",giveBtn.classList.remove("live"));
 }
@@ -91,14 +91,14 @@ setInterval(checkAttendanceLive,5000);checkAttendanceLive();
 function openAttendanceBox(){attendanceBox.style.display="block"}
 
 async function submitAttendance(){
- const res=await fetch("http://localhost:5000/api/attendance/mark",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({studentId:payload.id,code:codeInput.value})});
+ const res=await fetch("https://cloud-attendance-system-xyob.onrender.com/api/attendance/mark",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({studentId:payload.id,code:codeInput.value})});
  const data=await res.json();
  msg.innerText=data.message;
  if(data.message.toLowerCase().includes("success")){codeInput.style.display="none";submitBtn.style.display="none"}
 }
 
 async function loadAttendanceHistory(){
- const res=await fetch(`http://localhost:5000/api/attendance/student/history/${payload.id}`);
+ const res=await fetch(`https://cloud-attendance-system-xyob.onrender.com/api/attendance/student/history/${payload.id}`);
  const data=await res.json();
 
  let html=`<table><tr><th>Date & Time</th><th>Teacher</th><th>Status</th></tr>`;
@@ -119,7 +119,7 @@ function closeAttendanceHistory(){historyWrapper.style.display="none";historyBox
 async function downloadAttendancePDF(){
  const {jsPDF}=window.jspdf;
  const doc=new jsPDF();
- const res=await fetch(`http://localhost:5000/api/attendance/student/history/${payload.id}`);
+ const res=await fetch(`https://cloud-attendance-system-xyob.onrender.com/api/attendance/student/history/${payload.id}`);
  const data=await res.json();
 
  doc.text("Student Attendance Report",14,20);

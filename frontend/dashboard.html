@@ -121,7 +121,7 @@
 
     // Function to load the student list (only visible to teachers)
     async function loadStudents() {
-      const res = await fetch("http://localhost:5000/api/auth/students", {
+      const res = await fetch("https://cloud-attendance-system-xyob.onrender.com/api/auth/students", {
         headers: {
           "Authorization": "Bearer " + token
         }

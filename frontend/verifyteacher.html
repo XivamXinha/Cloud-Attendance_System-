@@ -163,8 +163,8 @@
         return;
       }
 
-      //const res = await fetch("http://localhost:5000/api/auth/verify", {
-      const res = await fetch("http://localhost:5000/api/auth/verify", {
+      //const res = await fetch("https://cloud-attendance-system-xyob.onrender.com/api/auth/verify", {
+      const res = await fetch("https://cloud-attendance-system-xyob.onrender.com/api/auth/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp })

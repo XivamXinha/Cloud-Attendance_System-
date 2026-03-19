@@ -221,7 +221,7 @@
     box.style.display = box.style.display === "block" ? "none" : "block";
 
     if (box.style.display === "block") {
-      const res = await fetch("http://localhost:5000/api/auth/students", {
+      const res = await fetch("https://cloud-attendance-system-xyob.onrender.com/api/auth/students", {
         headers: { Authorization: "Bearer " + token }
       });
       const data = await res.json();
@@ -233,7 +233,7 @@
 
   /* ===== TAKE ATTENDANCE ===== */
   async function startAttendance() {
-    const res = await fetch("http://localhost:5000/api/attendance/start", {
+    const res = await fetch("https://cloud-attendance-system-xyob.onrender.com/api/attendance/start", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ teacherId: payload.id })
@@ -248,7 +248,7 @@
 
   /* ===== COMPLETE ===== */
   async function completeAttendance() {
-    await fetch("http://localhost:5000/api/attendance/close", {
+    await fetch("https://cloud-attendance-system-xyob.onrender.com/api/attendance/close", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ sessionId: currentSessionId })
@@ -268,7 +268,7 @@
     grid.innerHTML = "Loading...";
 
     const res = await fetch(
-      `http://localhost:5000/api/attendance/teacher/sessions/${payload.id}`,
+      `https://cloud-attendance-system-xyob.onrender.com/api/attendance/teacher/sessions/${payload.id}`,
       { headers: { Authorization: "Bearer " + token } }
     );
 
@@ -316,7 +316,7 @@
     if (!ok) return;
 
     const res = await fetch(
-      `http://localhost:5000/api/attendance/teacher/session/${sessionId}`,
+      `https://cloud-attendance-system-xyob.onrender.com/api/attendance/teacher/session/${sessionId}`,
       {
         method: "DELETE",
         headers: { Authorization: "Bearer " + token }
